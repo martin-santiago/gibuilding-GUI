@@ -89,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   createProjectSubmitButton.addEventListener('click', () => {
     const projectName = document.getElementById('project-name').value
-    console.log(projectName)
     if (projectName !== '') {
       execute(`cd gitbuilding-projects && mkdir ${projectName} && cd ${projectName} && gitbuilding new`, (output) => {
         refreshProjects()

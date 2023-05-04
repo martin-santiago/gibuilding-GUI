@@ -37,6 +37,7 @@ function loadProjects (projects) {
   openProjectButtons.forEach(button => {
     button.addEventListener('click', () => {
       const projectName = button.getAttribute('projectName')
+      button.innerHTML = '<img src="spinner.gif" alt="spinner" width="20" height="20">'
       execute('lsof -i :6178', (output) => {
         if (output !== '') {
           execute('kill $(lsof -t -i:6178)', (output) => {
@@ -50,6 +51,7 @@ function loadProjects (projects) {
 
       const sendMessageToMain = () => {
         ipcRenderer.send('open-project', 'open')
+        button.innerHTML = 'Open Project'
       }
 
       setTimeout(sendMessageToMain, 3000)
@@ -88,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 
   createProjectSubmitButton.addEventListener('click', () => {
+    execute('mkdir gitbuilding-projects', (output) => {})
     const projectName = document.getElementById('project-name').value
     if (projectName !== '') {
       execute(`cd gitbuilding-projects && mkdir ${projectName} && cd ${projectName} && gitbuilding new`, (output) => {

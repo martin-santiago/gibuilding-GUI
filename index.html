@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gitbuilding App</title>
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav id="gitbuilding-navbar" class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+      <div class ="d-flex gap-2">
+        <img src="GitBuilding500x.png" alt="gitbuilding-icon" width="30" height="30">
+        <span class="navbar-brand mb-0 h1">GitBuilding</span>
+      </div>
+      <button id="create-project-form-button" class="btn btn-primary">Create New Project</button>
+    </div>
+  </nav>
+
+  <div class="d-flex">  
+    <div id="sidebar" class="d-flex flex-column bg-light gap-2 pt-2">
+      <div class="sidebar-option">Docs</div>
+      <div class="sidebar-option">Usage</div>
+      <div class="sidebar-option">About</div>
+      <div class="sidebar-option">Settings</div>
+    </div>
+    <div id="gitbuilding-projects" class="container mt-4">
+      <div class ="d-flex">
+        <h3>GitBuilding Projects</h3>
+
+        <div id="project-form" class="d-none">
+
+            <label>Enter project name:</label>
+            <input type="text" id="project-name" name="project-name" placeholder="gitbuilding project" ></input>
+            <button id="create-project-submit-button" class="btn mt-2 btn-primary">Create Project</button>
+            <button id="cancel-project-form-button" class="btn mt-2 btn-danger">Cancel</button>
+
+        </div>
+      </div>
+      
+      <div id="gitbuilding-projects-cards" class="row row-cols-1 row-cols-md-3 g-4 mt-4">
+
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>

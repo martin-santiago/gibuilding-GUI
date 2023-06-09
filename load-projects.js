@@ -1,5 +1,7 @@
 const exec = require('child_process').exec
 const { ipcRenderer } = require('electron')
+const os = require('os')
+const { pid } = require('process')
 
 function execute (command, callback) {
   exec(command, (error, stdout, stderr) => {
@@ -38,40 +40,71 @@ function loadProjects (projects) {
     button.addEventListener('click', () => {
       const projectName = button.getAttribute('projectName')
       button.innerHTML = '<img src="spinner.gif" alt="spinner" width="20" height="20">'
-      execute('lsof -i :6178', (output) => {
-        if (output !== '') {
-          execute('kill $(lsof -t -i:6178)', (output) => {
-            console.log('killing gitbuilding 6178 port, Goodbye')
+      console.log(projectName)
+      if (os.platform() == 'win32') {
+        execute('netstat -ano | findstr :6178', (output) => {
+          console.log('output:', output)
+          if (output != '') {
+            const pid = getListeningPid(output)
+            console.log('pid:',pid)
+            execute(`taskkill /PID ${pid} /F`)
+          }
+          execute(`cd gitbuilding-projects && cd ${projectName.trim()} && gitbuilding serve`, () =>  {
+            console.log(`running: cd gitbuilding-projects/${projectName} && gitbuilding serve`)
           })
-        }
-      })
-      execute(`cd gitbuilding-projects/${projectName} && gitbuilding serve`, (output) => {
-        console.log(`running: cd gitbuilding-projects/${projectName} && gitbuilding serve`)
-      })
+        })
+      }
+      else {
+        execute('lsof -i :6178', (output) => {
+          if (output !== '') {
+            execute('kill $(lsof -t -i:6178)', (output) => {
+              console.log('killing gitbuilding 6178 port, Goodbye')
+            })
+          }
+        })
+        execute(`cd gitbuilding-projects/${projectName} && gitbuilding serve`, (output) => {
+          console.log(`running: cd gitbuilding-projects/${projectName} && gitbuilding serve`)
+        })
+      }
+      
 
       const sendMessageToMain = () => {
         ipcRenderer.send('open-project', 'open')
         button.innerHTML = 'Open Project'
       }
 
-      setTimeout(sendMessageToMain, 3000)
+      setTimeout(sendMessageToMain, 4000)
     })
   })
   const deleteProjectButtons = document.querySelectorAll('.delete-project-button')
   deleteProjectButtons.forEach(button => {
     button.addEventListener('click', () => {
       const projectName = button.getAttribute('projectName')
-      execute(`cd gitbuilding-projects && rm -rf ${projectName}`, (output) => {
+      if (os.platform() == 'win32') {
+        execute(`rd /s /q "gitbuilding-projects/${projectName.trim()}"`, () => {})
         refreshProjects()
-      })
+      }
+      else {
+        execute(`cd gitbuilding-projects && rm -rf ${projectName}`, (output) => {
+          refreshProjects()
+        })
+      }
+
     })
   })
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  execute('cd gitbuilding-projects && ls', (output) => {
-    loadProjects(output)
-  })
+  if (os.platform() == 'win32') {
+    execute('cd gitbuilding-projects && dir /B', (output) => {
+      loadProjects(output)
+    })
+  }
+  else {
+    execute('cd gitbuilding-projects && ls', (output) => {
+      loadProjects(output)
+    })
+  }
 
   const createProjectFormButton = document.getElementById('create-project-form-button')
   const cancelProjectFormButton = document.getElementById('cancel-project-form-button')
@@ -108,7 +141,20 @@ document.addEventListener('DOMContentLoaded', () => {
 function refreshProjects () {
   const gitbuildingProjectCards = document.getElementById('gitbuilding-projects-cards')
   gitbuildingProjectCards.innerHTML = ''
-  execute('cd gitbuilding-projects && ls', (output) => {
-    loadProjects(output)
-  })
+  if (os.platform() == 'win32') {
+    execute('cd gitbuilding-projects && dir /B', (output) => {
+      loadProjects(output)
+    })
+  }
+  else {
+    execute('cd gitbuilding-projects && ls', (output) => {
+      loadProjects(output)
+    })
+  }
+}
+
+function getListeningPid(output) {
+  const regex = /TCP\s.*:6178\s.*LISTENING\s+(\d+)/g;
+  let match = regex.exec(output);
+  return match ? match[1] : 'No match found';
 }

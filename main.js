@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 const exec = require('child_process').exec
+const os = require('os')
 
 function execute (command, callback) {
   exec(command, (error, stdout, stderr) => {
@@ -15,7 +16,7 @@ function execute (command, callback) {
 
 const createWindow = () => {
   const window = new BrowserWindow({
-    width: 1000,
+    width: 1200,
     height: 600,
     minWidth: 1000,
     minHeight: 600,
@@ -34,9 +35,21 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', function () {
-  execute('kill $(lsof -t -i:6178)', (output) => {
-    console.log('killing gitbuilding 6178 port, Goodbye')
-  })
+  if (os.platform() == 'win32') {
+    execute('netstat -ano | findstr :6178', (output) => {
+      if (output != '') {
+        const pid = getListeningPid(output)
+        console.log('pid:',pid)
+        execute(`taskkill /PID ${pid} /F`)
+      }
+    })
+  }
+  else {
+    execute('kill $(lsof -t -i:6178)', (output) => {
+      console.log('killing gitbuilding 6178 port, Goodbye')
+    })
+  }
+
   if (process.platform !== 'darwin') app.quit()
 })
 

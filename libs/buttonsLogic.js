@@ -44,4 +44,4 @@ function loadOpenButtonsLogic () {
   })
 }
 
-module.exports = { loadProjectCards, loadOpenButtonsLogic, loadDeleteButtonsLogic }
+module.exports = { loadProjectCards, loadOpenButtonsLogic }

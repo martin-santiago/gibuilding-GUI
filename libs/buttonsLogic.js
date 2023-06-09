@@ -1,6 +1,8 @@
 const execute = require('./exec.js')
 const killPorts = require('./utils.js')
 const { ipcRenderer } = require('electron')
+const os = require('os')
+const refreshProjects = require('./loadProjects')
 
 function loadProjectCards (projects) {
   const projectList = projects.split('\n').filter(item => item !== '')
@@ -42,4 +44,4 @@ function loadOpenButtonsLogic () {
   })
 }
 
-module.exports = { loadProjectCards, loadOpenButtonsLogic }
+module.exports = { loadProjectCards, loadOpenButtonsLogic, loadDeleteButtonsLogic }

@@ -11,7 +11,7 @@ const createWindow = () => {
     icon: path.join(__dirname, 'GitBuilding500x.png'),
     webPreferences: {
       nodeIntegration: true,
-      preload: path.join(__dirname, 'libs/loadProjects.js')
+      preload: path.join(__dirname, 'libs/preload.js')
     }
   })
 

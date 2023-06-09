@@ -1,18 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
-const exec = require('child_process').exec
-const os = require('os')
-
-function execute (command, callback) {
-  exec(command, (error, stdout, stderr) => {
-    callback(stdout)
-    if (error) {
-      console.error(`exec error: ${error}`)
-    } else if (stderr) {
-      console.error(`stderr: ${stderr}`)
-    }
-  })
-};
+const killPorts = require('./libs/utils.js')
 
 const createWindow = () => {
   const window = new BrowserWindow({
@@ -23,7 +11,7 @@ const createWindow = () => {
     icon: path.join(__dirname, 'GitBuilding500x.png'),
     webPreferences: {
       nodeIntegration: true,
-      preload: path.join(__dirname, 'load-projects.js')
+      preload: path.join(__dirname, 'libs/loadProjects.js')
     }
   })
 
@@ -35,21 +23,7 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', function () {
-  if (os.platform() == 'win32') {
-    execute('netstat -ano | findstr :6178', (output) => {
-      if (output != '') {
-        const pid = getListeningPid(output)
-        console.log('pid:',pid)
-        execute(`taskkill /PID ${pid} /F`)
-      }
-    })
-  }
-  else {
-    execute('kill $(lsof -t -i:6178)', (output) => {
-      console.log('killing gitbuilding 6178 port, Goodbye')
-    })
-  }
-
+  killPorts()
   if (process.platform !== 'darwin') app.quit()
 })
 

@@ -30,7 +30,7 @@ function loadOpenButtonsLogic () {
   openProjectButtons.forEach(button => {
     button.addEventListener('click', () => {
       const projectName = button.getAttribute('projectName')
-      button.innerHTML = '<img src="assets/spinner.gif" alt="spinner" width="20" height="20">'
+      button.innerHTML = '<img src="assets/images/spinner.gif" alt="spinner" width="20" height="20">'
       killPorts()
       execute(`cd gitbuilding-projects && cd ${projectName.trim()} && gitbuilding serve`, () => {})
       const sendMessageToMain = () => {

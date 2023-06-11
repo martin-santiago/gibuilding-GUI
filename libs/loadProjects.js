@@ -8,7 +8,7 @@ function loadProjects () {
     loadProjectCards(projects)
     loadOpenButtonsLogic()
     loadDeleteButtonsLogic()
-  }, true)
+  })
 }
 
 function refreshProjects () {

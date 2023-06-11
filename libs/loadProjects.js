@@ -3,12 +3,12 @@ const os = require('os')
 const execute = require('./exec.js')
 
 function loadProjects () {
-  const command = os.platform() === 'win32' ? 'dir /B' : 'ls'
+  const command = os.platform() === 'win32' ? 'dir /B'.trim() : 'ls'
   execute(`cd gitbuilding-projects && ${command}`, (projects) => {
     loadProjectCards(projects)
     loadOpenButtonsLogic()
     loadDeleteButtonsLogic()
-  })
+  }, true)
 }
 
 function refreshProjects () {

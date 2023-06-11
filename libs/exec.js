@@ -1,12 +1,14 @@
 const exec = require('child_process').exec
 
-function execute (command, callback) {
+function execute (command, callback, ignore_trigger = false) {
   exec(command, (error, stdout, stderr) => {
-    callback(stdout)
-    if (error) {
-      console.error(`exec error: ${error}`)
-    } else if (stderr) {
-      console.error(`stderr: ${stderr}`)
+    if (!ignore_trigger) {
+      callback(stdout)
+      if (error && !ignore_trigger) {
+        console.error(`exec error: ${error}`)
+      } else if (stderr) {
+        console.error(`stderr: ${stderr}`)
+      }
     }
   })
 };
